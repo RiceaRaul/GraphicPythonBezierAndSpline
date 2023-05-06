@@ -1,6 +1,6 @@
 
 from bokeh.server.server import Server
-from .logic.bezier_curve import modify_doc
+from .pages.bezier_curve import modify_doc
 
 
 # Run the Bokeh server
