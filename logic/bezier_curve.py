@@ -5,7 +5,7 @@ class BezierCurve:
     def __init__(self, control_points):
         self.control_points = control_points
 
-    def binomial_coefficient(n, k):
+    def binomial_coefficient(self,n, k):
         coefficients = np.zeros(len(k), dtype=np.int64)
         for i, ki in enumerate(k):
             coefficients[i] = comb(n, ki, exact=True)
