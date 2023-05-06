@@ -1,5 +1,7 @@
 import numpy as np
 from scipy.special import comb
+import time
+
 class BezierCurve:
 
     def __init__(self, control_points):

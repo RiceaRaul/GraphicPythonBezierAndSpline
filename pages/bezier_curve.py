@@ -12,11 +12,20 @@ def modify_doc(doc):
     control_y = [2, 6, 3]
     control_points = np.column_stack((control_x,control_y))
 
+    t = np.linspace(0, 1, 101)
+    D = control_points[0] + t[:, np.newaxis] * (control_points[1] - control_points[0])
+    E = control_points[1] + t[:, np.newaxis] * (control_points[2] - control_points[1])
+    F = D + t[:, np.newaxis] * (E - D)
+
+    points_source = ColumnDataSource(data=dict(x=D[:, 0], y=D[:, 1], x2=E[:, 0], y2=E[:, 1], x3=F[:, 0], y3=F[:, 1]))
+
+
     # Create a ColumnDataSource for the control points
     control_source = ColumnDataSource(data=dict(x=control_x, y=control_y))
 
     # Add the control points as scatter glyphs
     control_scatter = p.scatter('x', 'y', source=control_source, size=10, color='blue')
+    p.line('x', 'y', source=control_source, line_width=2, color='gray')
 
     # Enable point drawing tool for control points
     control_draw_tool = PointDrawTool(renderers=[control_scatter], empty_value='purple')
@@ -25,7 +34,7 @@ def modify_doc(doc):
 
     # Create a Line glyph for the Bezier curve
     curve_source = ColumnDataSource(data=dict(x=[], y=[]))
-    curve = p.line('x', 'y', source=curve_source, line_width=2, color='green')
+    curve = p.line('x', 'y', source=curve_source, line_width=2, color='red')
 
     bezier_curve = BezierCurve(control_points)
 
@@ -37,8 +46,13 @@ def modify_doc(doc):
         bezier_curve.control_points=control_points
         t=np.linspace(0,1,101)
         curve_points = bezier_curve.calculate_curve_points(t)
+            
+        D = control_points[0] + t[:, np.newaxis] * (control_points[1] - control_points[0])
+        E = control_points[1] + t[:, np.newaxis] * (control_points[2] - control_points[1])
+        F = D + t[:, np.newaxis] * (E - D)
 
         curve_source.data = {'x': curve_points[:,0], 'y': curve_points[:,1]}
+        points_source.data = {'x': D[:, 0], 'y': D[:, 1], 'x2': E[:, 0], 'y2': E[:, 1], 'x3': F[:, 0], 'y3': F[:, 1]}
 
 
     # Add the callback to the control points data source
