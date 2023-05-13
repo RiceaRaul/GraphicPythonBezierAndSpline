@@ -1,5 +1,5 @@
 from bokeh.plotting import figure
-from bokeh.models import ColumnDataSource, PointDrawTool,FileInput,Div, TableColumn, NumberFormatter,Button
+from bokeh.models import ColumnDataSource, PointDrawTool,FileInput,Div, TableColumn, NumberFormatter,Button,IntEditor
 from bokeh.layouts import widgetbox
 from bokeh.models.widgets import DataTable
 import numpy as np
@@ -42,19 +42,16 @@ def modify_doc(doc):
     curve = p.line('x', 'y', source=curve_source, line_width=2, color='red')
 
     bezier_curve = BezierCurve(control_points)
- # Create a DataTable for the control points
-    columns = [TableColumn(field='x', title='X'), 
-               TableColumn(field='y', title='Y')
-              ]
 
-    table = DataTable(source=control_source, columns=columns, editable=True)
-    
+    columns = [TableColumn(field='x', title='X', editor=IntEditor(), formatter=NumberFormatter(format='0.000')),    
+               TableColumn(field='y', title='Y',  editor=IntEditor(),formatter=NumberFormatter(format='0.000')),]
+    data_table = DataTable(source=control_source, columns=columns, height=300, editable=True)
+
     # Python callback to update the data sources and redraw the curve
-    def update_curve(new):
-        print(new)
-        print("Update")
-        control_x = [float(x) for x in new['x']]
-        control_y = [float(y) for y in new['y']]
+    
+    def update_curve():
+        control_x = [float(x) for x in control_source.data['x']]
+        control_y = [float(y) for y in control_source.data['y']]
         control_points = np.column_stack((control_x,control_y))
         bezier_curve.control_points=control_points
         t=np.linspace(0,1,101)
@@ -71,6 +68,8 @@ def modify_doc(doc):
     file_input_title = Div(text="<b>Choose an input file:</b>")
 
     file_input = FileInput(accept=".csv")
+
+    
 
     # Python callback to handle file selection
     def handle_file_upload(attr, old, new):
@@ -98,7 +97,11 @@ def modify_doc(doc):
     doc.add_root(file_input_box)
 
     # Add the callback to the control points data source
-    control_source.on_change('data', lambda attr, old, new: update_curve(new))
+    control_source.on_change('data', lambda attr, old, new: update_curve())
+
+    def test(attr,old,new):
+        print(attr)
+    control_source.on_change('data', test)
 
     p.x_range.range_padding = 0.1
     p.y_range.range_padding = 0.1
@@ -107,7 +110,7 @@ def modify_doc(doc):
     p.y_range.start = 0
     p.y_range.end = 7
 
-    update_curve(control_source.data)
+    update_curve()
     # Create a curdoc and add the plot to it
     doc.add_root(p)
 
@@ -124,8 +127,5 @@ def modify_doc(doc):
     button.on_click(add_point)
     doc.add_root(button)
 
-    # Add the callback to the table data source
-    #table_source.on_change('data', update_table)
-
-    # Add the table widget to the document
-    doc.add_root(table)
+   
+    doc.add_root(data_table)
