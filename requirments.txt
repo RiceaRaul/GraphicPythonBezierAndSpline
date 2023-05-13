@@ -11,12 +11,14 @@ contourpy==1.0.7
 cycler==0.11.0
 decorator==5.1.1
 entrypoints==0.4
+Flask==2.3.2
 fonttools==4.39.3
 geomdl==5.3.1
 gitdb==4.0.10
 GitPython==3.1.31
 idna==3.4
 importlib-metadata==6.6.0
+itsdangerous==2.1.2
 Jinja2==3.1.2
 jsonschema==4.17.3
 kiwisolver==1.4.4
@@ -31,6 +33,7 @@ Pillow==9.5.0
 plotly==5.14.1
 protobuf==3.20.3
 pyarrow==12.0.0
+pybase64==1.2.3
 pydeck==0.8.1b0
 Pygments==2.15.1
 Pympler==1.0.1
@@ -56,5 +59,6 @@ tzlocal==4.3
 urllib3==1.26.15
 validators==0.20.0
 watchdog==3.0.0
+Werkzeug==2.3.4
 xyzservices==2023.2.0
 zipp==3.15.0
