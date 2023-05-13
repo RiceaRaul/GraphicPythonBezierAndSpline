@@ -1,6 +1,6 @@
 from bokeh.plotting import figure
 from bokeh.models import ColumnDataSource, PointDrawTool,FileInput,Div, TableColumn, NumberFormatter,Button,IntEditor
-from bokeh.layouts import widgetbox
+from bokeh.layouts import Column,Row
 from bokeh.models.widgets import DataTable
 import numpy as np
 from logic import BezierCurve
@@ -88,13 +88,10 @@ def modify_doc(doc):
         update_curve()
 
 
-    file_input_box = widgetbox(file_input_title, file_input)
+  
 
     # Add the callback to the file input widget
     file_input.on_change('value', handle_file_upload)
-
-    # Add the FileInput widget to the document
-    doc.add_root(file_input_box)
 
     # Add the callback to the control points data source
     control_source.on_change('data', lambda attr, old, new: update_curve())
@@ -112,8 +109,6 @@ def modify_doc(doc):
 
     update_curve()
     # Create a curdoc and add the plot to it
-    doc.add_root(p)
-
     def add_point():
         new_x = 0
         new_y = 0
@@ -125,7 +120,12 @@ def modify_doc(doc):
     # create button and add callback function
     button = Button(label='Add Point', button_type='success')
     button.on_click(add_point)
-    doc.add_root(button)
 
-   
-    doc.add_root(data_table)
+    row_buttons = Row(file_input,button)
+    file_input_box = Column(file_input_title,row_buttons )
+  
+    doc.add_root(file_input_box)
+    row = Row(p,data_table)
+    doc.add_root(row)
+
+    
