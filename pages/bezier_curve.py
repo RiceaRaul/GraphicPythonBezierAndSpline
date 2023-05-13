@@ -40,6 +40,7 @@ def modify_doc(doc):
 
     # Python callback to update the data sources and redraw the curve
     def update_curve():
+        print("Update")
         control_x = control_source.data['x']
         control_y = control_source.data['y']
         control_points = np.column_stack((control_x,control_y))
