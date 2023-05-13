@@ -1,7 +1,11 @@
 from bokeh.plotting import figure
-from bokeh.models import ColumnDataSource, PointDrawTool
+from bokeh.models import ColumnDataSource, PointDrawTool,FileInput,Div
+from bokeh.layouts import widgetbox
 import numpy as np
 from logic import BezierCurve
+import pandas as pd
+from pybase64 import b64decode
+import io
 
 def modify_doc(doc):
     # Create a new plot with the title and axis labels
@@ -55,6 +59,25 @@ def modify_doc(doc):
         curve_source.data = {'x': curve_points[:,0], 'y': curve_points[:,1]}
         points_source.data = {'x': D[:, 0], 'y': D[:, 1], 'x2': E[:, 0], 'y2': E[:, 1], 'x3': F[:, 0], 'y3': F[:, 1]}
 
+    file_input_title = Div(text="<b>Choose an input file:</b>")
+
+    file_input = FileInput(accept=".csv")
+
+    # Python callback to handle file selection
+    def handle_file_upload(attr, old, new):
+        file = io.BytesIO(b64decode(new))
+        data_frame = pd.read_csv(file, sep = ',', header = 0)
+        control_source.data = data_frame.to_dict(orient='list')
+        update_curve()
+
+
+    file_input_box = widgetbox(file_input_title, file_input)
+
+    # Add the callback to the file input widget
+    file_input.on_change('value', handle_file_upload)
+
+    # Add the FileInput widget to the document
+    doc.add_root(file_input_box)
 
     # Add the callback to the control points data source
     control_source.on_change('data', lambda attr, old, new: update_curve())

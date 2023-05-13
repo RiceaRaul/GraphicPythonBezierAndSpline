@@ -17,7 +17,6 @@ def bkapp_page():
     script = server_document("http://127.0.0.1:5007/app")
     return render_template("template.html", script=script)
 
-
 def bk_worker():
     server = Server({'/app': modify_doc},
                     io_loop=IOLoop(),
@@ -27,48 +26,48 @@ def bk_worker():
     server.io_loop.start()
 
 
-def generate_app(doc):
-    df = pd.read_csv("example.csv", index_col=0)
-    data_source = ColumnDataSource(df)
-    line_plot1 = figure(sizing_mode="stretch_both")
-    line_plot1.line(
-        source=data_source,
-        x="x",
-        y="y",
-    )
-    line_plot2 = figure(sizing_mode="stretch_both")
-    line_plot2.line(
-        source=data_source,
-        x="y",
-        y="x",
-    )
-    sliders = [
-        Slider(start=0, end=5, value=5, step=1, title="Max X"),
-        Slider(start=0, end=25, value=25, step=1, title="Max Y"),
-    ]
+# def generate_app(doc):
+#     df = pd.read_csv("example.csv", index_col=0)
+#     data_source = ColumnDataSource(df)
+#     line_plot1 = figure(sizing_mode="stretch_both")
+#     line_plot1.line(
+#         source=data_source,
+#         x="x",
+#         y="y",
+#     )
+#     line_plot2 = figure(sizing_mode="stretch_both")
+#     line_plot2.line(
+#         source=data_source,
+#         x="y",
+#         y="x",
+#     )
+#     sliders = [
+#         Slider(start=0, end=5, value=5, step=1, title="Max X"),
+#         Slider(start=0, end=25, value=25, step=1, title="Max Y"),
+#     ]
 
-    def update_graph(attr, old, new):
-        x_max = sliders[0].value
-        y_max = sliders[1].value
-        filtered_df = df[(df["x"] <= x_max) & (df["y"] <= y_max)]
-        new_data = ColumnDataSource(filtered_df).data
-        data_source.data = new_data
+#     def update_graph(attr, old, new):
+#         x_max = sliders[0].value
+#         y_max = sliders[1].value
+#         filtered_df = df[(df["x"] <= x_max) & (df["y"] <= y_max)]
+#         new_data = ColumnDataSource(filtered_df).data
+#         data_source.data = new_data
 
-    for slider in sliders:
-        slider.on_change("value", update_graph)
+#     for slider in sliders:
+#         slider.on_change("value", update_graph)
 
-    layout = grid(
-        [
-            [
-                line_plot1,
-                column(sliders),
-            ],
-            line_plot2,
-        ],
-        sizing_mode="stretch_both",
-    )
+#     layout = grid(
+#         [
+#             [
+#                 line_plot1,
+#                 column(sliders),
+#             ],
+#             line_plot2,
+#         ],
+#         sizing_mode="stretch_both",
+#     )
 
-    doc.add_root(layout)
+#     doc.add_root(layout)
 
 
 if __name__ == '__main__':
