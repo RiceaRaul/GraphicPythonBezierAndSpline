@@ -7,7 +7,7 @@ from flask import Flask, render_template
 from tornado.ioloop import IOLoop
 from threading import Thread
 import pandas as pd
-from  pages import modify_doc
+import pages
 
 app = Flask(__name__)
 
@@ -17,8 +17,13 @@ def bkapp_page():
     script = server_document("http://127.0.0.1:5007/app")
     return render_template("template.html", script=script)
 
+@app.route("/spline", methods=["GET"])
+def bsplinekapp_page():
+    script = server_document("http://127.0.0.1:5007/spline")
+    return render_template("template.html", script=script)
+
 def bk_worker():
-    server = Server({'/app': modify_doc},
+    server = Server({'/app': pages.bezier_curve.modify_doc,'/spline':pages.spline_curve.modify_doc},
                     io_loop=IOLoop(),
                     port=5007,
                     allow_websocket_origin=["127.0.0.1:8001"])

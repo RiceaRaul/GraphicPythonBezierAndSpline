@@ -1,2 +1,2 @@
 from .bezier_curve import BezierCurve
-from .b_spline import BSpline
+from .b_spline import BSplineCurve
