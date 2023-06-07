@@ -7,13 +7,31 @@ class BezierCurve:
     def __init__(self, control_points):
         self.control_points = control_points
 
-    def binomial_coefficient(self,n, k):
+    def binomial_coefficient(self, n: int, k: list) -> np.ndarray:
+        """Calculate the binomial coefficients.
+
+        Args:
+            n (int): The total number of elements.
+            k (list): The list of elements to choose from.
+
+        Returns:
+            np.ndarray: An array containing the binomial coefficients for each element in k.
+        """
         coefficients = np.zeros(len(k), dtype=np.int64)
         for i, ki in enumerate(k):
             coefficients[i] = comb(n, ki, exact=True)
         return coefficients
 
-    def calculate_curve_points(self, t):
+
+    def calculate_curve_points(self, t: list) -> np.ndarray:
+        """Calculate the points on the curve.
+
+        Args:
+            t (list): The list of parameters.
+
+        Returns:
+            np.ndarray: An array containing the calculated points on the curve.
+        """
         n = len(self.control_points) - 1
 
         # Calculate points on the curve
@@ -24,3 +42,4 @@ class BezierCurve:
             curve_points[i] = np.dot(binomial_coefficients, self.control_points * bernstein_polynomials.reshape(-1, 1))
 
         return curve_points
+

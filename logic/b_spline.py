@@ -2,20 +2,29 @@ import numpy as np
 import scipy.interpolate as si
 
 class BSplineCurve:
-    def scipy_bspline(self, cv, n, degree):
+    
+    @staticmethod
+    def scipy_bspline(cv: list, n: int, degree: int) -> np.ndarray:
+        """Bspline basis function using scipy
 
-        """ bspline basis function
-            cv       = list of control points.
-            n        = number of points on the curve.
-            degree   = curve degree
+        Args:
+            cv (list): list of control points.
+            n (int): number of points on the curve.
+            degree (int): curve degree
+
+        Returns:
+            np.ndarray: An array containing the calculated points on the curve.
         """
+        
         # Prevent degree from exceeding count-1, otherwise splev will crash
-        degree = np.clip(degree,1,n-1)
+        degree = np.clip(degree, 1, n - 1)
 
         # Create a range of u values
         c = len(cv)
         kv = np.array(
-            [0] * degree + list(range(c - degree + 1)) + [c - degree] * degree, dtype='int')
+            [0] * degree + list(range(c - degree + 1)) + [c - degree] * degree,
+            dtype="int",
+        )
         u = np.linspace(0, c - degree, n)
 
         # Calculate result
@@ -26,39 +35,48 @@ class BSplineCurve:
 
         return points
 
-    def bspline_basis(self, c, n, degree):
-        """ bspline basis function
-            c        = number of control points.
-            n        = number of points on the curve.
-            degree   = curve degree
+    @staticmethod
+    def bspline_basis(control_point_count: int, curve_point_count: int, degree: int) -> np.ndarray:
+        """bspline basis function
+
+        Args:
+            c (int): number of control points.
+            n (int): number of points on the curve.
+            degree (int): curve degree
+
+        Returns:
+            np.ndarray: An array containing the calculated points on the curve.
         """
 
-        degree = np.clip(degree,1,c-1)
+        # Prevent degree from exceeding count-1, otherwise splev will crash
+        degree = np.clip(degree, 1, control_point_count - 1)
+
         # Create knot vector and a range of samples on the curve
-        kv = np.array([0] * degree + list(range(c - degree + 1)) +
-                      [c - degree] * degree, dtype='int')  # knot vector
-        u = np.linspace(0, c - degree, n)  # samples range
+        knot_vector = np.array(
+            [0] * degree + list(range(control_point_count - degree + 1)) + [control_point_count - degree] * degree,
+            dtype="int",
+        )  # knot vector
+        samples = np.linspace(0, control_point_count - degree, curve_point_count)  # samples range
 
         # Cox - DeBoor recursive function to calculate basis
-        def coxDeBoor(k, d):
-            # Test for end conditions
-            if (d == 0):
-                return ((u - kv[k] >= 0) & (u - kv[k + 1] < 0)).astype(int)
+        def coxDeBoor(knot_index, depth):
+            if depth == 0:
+                return ((samples - knot_vector[knot_index] >= 0) & (samples - knot_vector[knot_index + 1] < 0)).astype(int)
 
-            denom1 = kv[k + d] - kv[k]
+            denom1 = knot_vector[knot_index + depth] - knot_vector[knot_index]
             term1 = 0
             if denom1 > 0:
-                term1 = ((u - kv[k]) / denom1) * coxDeBoor(k, d - 1)
+                term1 = ((samples - knot_vector[knot_index]) / denom1) * coxDeBoor(knot_index, depth - 1)
 
-            denom2 = kv[k + d + 1] - kv[k + 1]
+            denom2 = knot_vector[knot_index + depth + 1] - knot_vector[knot_index + 1]
             term2 = 0
             if denom2 > 0:
-                term2 = ((-(u - kv[k + d + 1]) / denom2) * coxDeBoor(k + 1, d - 1))
+                term2 = (-(samples - knot_vector[knot_index + depth + 1]) / denom2) * coxDeBoor(knot_index + 1, depth - 1)
 
             return term1 + term2
 
         # Compute basis for each point
-        b = np.column_stack([coxDeBoor(k, degree) for k in range(c)])
-        b[-1, -1] = 1
+        basis_functions = np.column_stack([coxDeBoor(k, degree) for k in range(control_point_count)])
+        basis_functions[-1, -1] = 1
 
-        return b
+        return basis_functions
