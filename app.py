@@ -8,9 +8,10 @@ from pages import bezier_curve, spline_curve
 app = Flask(__name__)
 
 routes = {
-    "/app": bezier_curve.modify_doc, 
+    "/app": bezier_curve.modify_doc,
     "/spline": spline_curve.modify_doc
 }
+
 
 @app.route("/", methods=["GET"])
 def bkapp_page():

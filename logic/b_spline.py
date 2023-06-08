@@ -78,5 +78,5 @@ class BSplineCurve:
         # Compute basis for each point
         basis_functions = np.column_stack([coxDeBoor(k, degree) for k in range(control_point_count)])
         basis_functions[-1, -1] = 1
-
         return basis_functions
+

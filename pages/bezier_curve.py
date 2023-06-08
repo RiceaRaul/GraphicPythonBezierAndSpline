@@ -4,7 +4,7 @@ from bokeh.models import (
     PointDrawTool,
     FileInput,
     Div,
-    Button,
+    Button
 )
 from bokeh.layouts import Column, Row
 from bokeh.models.widgets import DataTable
@@ -15,7 +15,7 @@ from pybase64 import b64decode
 import io
 from utils.tabledata import getCols
 from utils.error_dialog import DialogModal
-
+from utils.input_points import InputPoints
 def modify_doc(doc):
     # Create a new plot with the title and axis labels
     p = figure(
@@ -96,36 +96,58 @@ def modify_doc(doc):
 
         curve_source.data = {"x": curve_points[:, 0], "y": curve_points[:, 1]}
 
-    file_input_title = Div(text="<b>Choose an input file:</b>")
+    file_input_title = Div(text="<b>Alege un fisier:</b>")
 
-    file_input = FileInput(accept=".csv")
+    file_input = FileInput()
 
     # Python callback to handle file selection
     def handle_file_upload(attr, old, new):
-        file = io.BytesIO(b64decode(new))
-        data_frame = pd.read_csv(file, sep=",", header=0)
-        data_source = data_frame.to_dict(orient="list")
-        invalid_x_row = np.isnan(data_source["x"]).argmax()
-        newFileInput = FileInput(accept=".csv")
-        newFileInput.on_change("value", handle_file_upload)
-        row_buttons.children[0] = newFileInput
-        
-        if invalid_x_row > -1:
-            dialog.openDialog(f"Verifica valoare pentru x pe randul {invalid_x_row + 2}")
+        print(attr)
+        if row_buttons.children[0].value:
+            extension = row_buttons.children[0].filename.split(".")[-1]
+            print(extension)
+            if extension.lower() != "csv":
+                dialog.openDialog("Trebuie urcat un fisier csv.")
+            else:
+                file = io.BytesIO(b64decode(row_buttons.children[0].value))
+                data_frame = pd.read_csv(file, sep=",", header=0)
+                data_source = data_frame.to_dict(orient="list")
+
+                newFileInput = FileInput()
+                newFileInput.on_change("filename", handle_file_upload)
+                row_buttons.children[0] = newFileInput
+
+                invalid_x_row = np.isnan(data_source["x"])
+                if invalid_x_row[invalid_x_row.argmax()]:
+                    dialog.openDialog(f"Verifica valoare pentru x pe randul {invalid_x_row.argmax() + 2}")
+                    return
+
+                invalid_y_row = np.isnan(data_source["y"])
+                if invalid_y_row[invalid_y_row.argmax()]:
+                    dialog.openDialog(f"Verifica valoare pentru y pe randul {invalid_y_row.argmax() + 2}")
+                    return
+
+                control_source.data = data_source
+                update_curve()
+
+    def addPoint():
+        x = input_group.get_x_value()
+        y = input_group.get_y_value()
+        if x.strip().replace('.', '', 1).isdigit():
+            x_value = float(x.strip())
+        else:
+            dialog.openDialog("Adauga un numar valid pentru x! Ex: 1, 1.5.")
             return
 
-        invalid_y_row = np.isnan(data_source["y"]).argmax()
-        if invalid_y_row > -1:
-            dialog.openDialog(f"Verifica valoare pentru y pe randul {invalid_y_row + 2}")
+        if y.strip().replace('.', '', 1).isdigit():
+            y_value = float(y.strip())
+        else:
+            dialog.openDialog("Adauga un numar valid pentru y! Ex: 1, 1.5.")
             return
 
-        control_source.data = data_source
+        control_source.stream({"x": [x_value], "y": [y_value]})
         update_curve()
-
-    # Add the callback to the file input widget
-    file_input.on_change("value", handle_file_upload)
-
-    # Add the callback to the control points data source
+        
     control_source.on_change("data", lambda attr, old, new: update_curve())
 
     p.x_range.range_padding = 0.1
@@ -145,14 +167,15 @@ def modify_doc(doc):
         new_data["y"].append(new_y)
         control_source.data = new_data
 
-    # create button and add callback function
-    button = Button(label="Add Point", button_type="success")
+    input_group = InputPoints(addPoint)
+    button = Button(label="Adauga punct", button_type="success")
     button.on_click(add_point)
 
     row_buttons = Row(file_input, button)
-    file_input_box = Column(file_input_title, row_buttons)
+    file_input_box = Column(file_input_title, row_buttons, input_group.get_input_group())
 
-    doc.add_root(file_input_box)
-    row = Row(p, data_table)
+    row_buttons.children[0].on_change("filename", handle_file_upload)
+
+    row = Row(p, Column(file_input_box, data_table))
     doc.add_root(row)
     doc.add_root(dialog.getDialog())

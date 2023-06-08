@@ -1,0 +1,9 @@
+{
+    "configurations": [
+        {
+            "type": "python",
+            "name": "BezierCurve",
+            "arguments": ["app.py"],
+        },
+    ]
+}
