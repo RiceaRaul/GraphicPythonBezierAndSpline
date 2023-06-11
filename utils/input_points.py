@@ -1,7 +1,7 @@
 from typing import Callable
 
-from bokeh.models.widgets import TextInput,Button,Div
-from bokeh.layouts import Row,Column
+from bokeh.models.widgets import TextInput, Button, Div
+from bokeh.layouts import Row, Column
 from bokeh.events import ButtonClick
 
 class InputPoints:

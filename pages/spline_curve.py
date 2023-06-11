@@ -7,6 +7,7 @@ from bokeh.models import (
     Div,
     Button
 )
+from bokeh.events import Reset
 from bokeh.layouts import Column, Row
 from bokeh.models.widgets import DataTable
 import numpy as np
@@ -21,7 +22,7 @@ def modify_doc(doc):
     # degree = 4
     # Create a new plot with the title and axis labels
     p = figure(
-        title="Scatter Plot with B-spline Curve", x_axis_label="X", y_axis_label="Y"
+        title="Grafic B-spline", x_axis_label="X", y_axis_label="Y"
     )
 
     degree = Slider(start=1, end=100, value=1, step=1, title="Degree")
@@ -41,7 +42,7 @@ def modify_doc(doc):
     control_draw_tool = PointDrawTool(renderers=[control_scatter], empty_value="purple")
     p.add_tools(control_draw_tool)
     p.toolbar.active_tap = control_draw_tool
-
+    p.on_event(Reset, lambda: (control_source.data.update(dict(x=[], y=[])), curve_source.data.update(dict(x=[], y=[])), setattr(degree, "value", 1)))
     curve_source = ColumnDataSource(data=dict(x=[], y=[]))
     p.line("x", "y", source=curve_source, line_width=2, color="red")
 
@@ -51,9 +52,8 @@ def modify_doc(doc):
         control_x = [x for x in control_source.data["x"]]
         control_y = [y for y in control_source.data["y"]]
         control_points = np.column_stack((control_x, control_y))
-        degree.end = len(control_points) - 1
+        degree.end = 2 if len(control_points) - 1 <= 0 else len(control_points) - 1
         if len(control_points) > 0:
-            print(control_points)
             p = BSplineCurve.bspline_basis(len(control_points), 100, currentDegree)
             points_basis = np.dot(p, control_points)
             x, y = points_basis.T
@@ -148,10 +148,8 @@ def modify_doc(doc):
     button.on_click(add_point)
     del_button = Button(label="Sterge Punct", button_type="danger")
     del_button.on_click(del_point)
-    button_reset = Button(label="Reseteaza Grafic", button_type="warning")
-    button_reset.on_click(lambda: (control_source.data.update(dict(x=[], y=[])), curve_source.data.update(dict(x=[], y=[]))))
-    button_row = Row(button,del_button,button_reset)
-    table_column = Column(Div(text="<b>Tabel de coordonate:</b>"),data_table)
+    button_row = Row(button, del_button)
+    table_column = Column(Div(text="<b>Tabel de coordonate:</b>"), data_table)
     input_group = InputPoints(addPoint)
     right_col_first_row = Row(degree,file_group)
     right_col = Column(right_col_first_row,button_row, input_group.get_input_group(), table_column)
