@@ -19,7 +19,7 @@ from utils.input_points import InputPoints
 def modify_doc(doc):
     # Create a new plot with the title and axis labels
     p = figure(
-        title="Scatter Plot with Bezier Curve", x_axis_label="X", y_axis_label="Y"
+        title="Grafic  Bezier Curve", x_axis_label="X", y_axis_label="Y"
     )
 
     # Create the control points for the Bezier curve
@@ -167,15 +167,30 @@ def modify_doc(doc):
         new_data["y"].append(new_y)
         control_source.data = new_data
 
+    def del_point():
+        if(len(control_source.selected.indices)):
+            new_data = dict(control_source.data)
+            new_data['x'].pop(control_source.selected.indices[0])
+            new_data['y'].pop(control_source.selected.indices[0])
+            control_source.data = new_data
+            control_source.selected.indices=[]
+        else:
+            dialog.openDialog("Nu este selectat niciun punct !")
+        
+
     input_group = InputPoints(addPoint)
     button = Button(label="Adauga punct", button_type="success")
     button.on_click(add_point)
+    del_button = Button(label="Sterge Punct", button_type="danger")
+    del_button.on_click(del_point)
+    button_reset = Button(label="Reseteaza Grafic", button_type="warning")
+    button_reset.on_click(lambda: (control_source.data.update(dict(x=[], y=[])), curve_source.data.update(dict(x=[], y=[]))))
 
-    row_buttons = Row(file_input, button)
+    row_buttons = Row(file_input, button , del_button,button_reset)
     file_input_box = Column(file_input_title, row_buttons, input_group.get_input_group())
 
     row_buttons.children[0].on_change("filename", handle_file_upload)
-
-    row = Row(p, Column(file_input_box, data_table))
+    table_column = Column(Div(text="<b>Tabel de coordonate:</b>"),data_table)
+    row = Row(p, Column(file_input_box,table_column))
     doc.add_root(row)
     doc.add_root(dialog.getDialog())

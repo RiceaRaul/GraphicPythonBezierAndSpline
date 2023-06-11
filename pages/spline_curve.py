@@ -4,7 +4,8 @@ from bokeh.models import (
     PointDrawTool,
     Slider,
     FileInput,
-    Div
+    Div,
+    Button
 )
 from bokeh.layouts import Column, Row
 from bokeh.models.widgets import DataTable
@@ -115,6 +116,24 @@ def modify_doc(doc):
 
     update_curve()
 
+    def add_point():
+        new_x = 0
+        new_y = 0
+        new_data = dict(control_source.data)
+        new_data["x"].append(new_x)
+        new_data["y"].append(new_y)
+        control_source.data = new_data
+
+    def del_point():
+        if(len(control_source.selected.indices)):
+            new_data = dict(control_source.data)
+            new_data['x'].pop(control_source.selected.indices[0])
+            new_data['y'].pop(control_source.selected.indices[0])
+            control_source.data = new_data
+            control_source.selected.indices=[]
+        else:
+            dialog.openDialog("Nu este selectat niciun punct !")
+
     file_input_title = Div(text="<b>Choose an input file:</b>")
     file_input = FileInput(accept=".csv")
     file_group = Column(file_input_title,file_input)
@@ -123,10 +142,19 @@ def modify_doc(doc):
     data_table = DataTable(
         source=control_source, columns=getCols(), height=300, editable=True
     )
-    input_group = InputPoints(addPoint)
 
+    input_group = InputPoints(addPoint)
+    button = Button(label="Adauga punct", button_type="success")
+    button.on_click(add_point)
+    del_button = Button(label="Sterge Punct", button_type="danger")
+    del_button.on_click(del_point)
+    button_reset = Button(label="Reseteaza Grafic", button_type="warning")
+    button_reset.on_click(lambda: (control_source.data.update(dict(x=[], y=[])), curve_source.data.update(dict(x=[], y=[]))))
+    button_row = Row(button,del_button,button_reset)
+    table_column = Column(Div(text="<b>Tabel de coordonate:</b>"),data_table)
+    input_group = InputPoints(addPoint)
     right_col_first_row = Row(degree,file_group)
-    right_col = Column(right_col_first_row, input_group.get_input_group(), data_table)
+    right_col = Column(right_col_first_row,button_row, input_group.get_input_group(), table_column)
     row_buttons = Row(p, right_col)
     doc.add_root(row_buttons)
     doc.add_root(dialog.getDialog())

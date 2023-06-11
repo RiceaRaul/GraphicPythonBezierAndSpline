@@ -21,21 +21,6 @@
             transform: translate(-50%, -50%);
         }
 
-        .custom-row{
-            background-color: yellow;
-            display: flex !important;
-            align-items: self-end !important;
-        }
-
-         .bk-root .bk-layout-row {
-            display: flex;
-            align-items: flex-end;
-        }
-
-        .bk-root .bk-layout-row > .bk-widget {
-            /* individual item styles */
-        }
-
         .header{
             display: flex;
             flex-direction: column;
@@ -45,12 +30,21 @@
         }
         .header a{
             text-decoration: none;
-            background: #ffff66;
+            background: #fff;
             padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            color: black;
+            transition: opacity 0.1s cubic-bezier(0.1, 0.7, 1.0, 0.1);
+        }
+
+        .header a:hover{
+            opacity: 0.5;
         }
 
         .row {
-            
+            display: flex;
+            gap: 10px;
         }
     </style>
 </head>
@@ -62,7 +56,7 @@
         <a href="/spline">B-Spline Curve</a>
     </div>
 </div>
-<div style="height: 100vh; width: 100vw;display: flex;justify-content: center;align-items: center;">
+<div style="height: 100vh; width: 100vw;display: flex;justify-content: center;align-items: center; flex-wrap: wrap;">
     {{ script|safe }}
 </div>
 </body>

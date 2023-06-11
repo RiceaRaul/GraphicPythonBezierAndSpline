@@ -17,7 +17,7 @@ class DialogModal:
         self.error_message = Div(text=f"<b>{self.modal_message}</b>")
         self.close_button = Button(label="Close", button_type="success")  
         self.close_button.on_event(ButtonClick, self._closeModal)
-        self.dialog = Dialog(title="Error", content=Column(self.error_message, self.close_button), visible=False,draggable = True,closable = False)
+        self.dialog = Dialog(title="Error", content=Column(self.error_message, self.close_button), visible=self.modal_visible,draggable = True,closable = False)
         self.dialog.css_classes = ["custom-dialog"]
 
     def getDialog(self) -> Dialog:
