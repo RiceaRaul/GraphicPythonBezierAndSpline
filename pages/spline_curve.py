@@ -88,8 +88,8 @@ def modify_doc(doc):
             data_source = data_frame.to_dict(orient="list")
 
             newFileInput = FileInput()
-            newFileInput.on_change("filename", handle_file_upload)
             file_group.children[1] = newFileInput
+            file_group.children[1].on_change("filename", handle_file_upload)
 
             invalid_x_row = np.isnan(data_source["x"])
             if invalid_x_row[invalid_x_row.argmax()]:

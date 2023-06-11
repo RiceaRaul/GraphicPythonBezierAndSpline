@@ -114,8 +114,8 @@ def modify_doc(doc):
                 data_source = data_frame.to_dict(orient="list")
 
                 newFileInput = FileInput()
-                newFileInput.on_change("filename", handle_file_upload)
                 row_buttons.children[0] = newFileInput
+                row_buttons.children[0].on_change("filename", handle_file_upload)
 
                 invalid_x_row = np.isnan(data_source["x"])
                 if invalid_x_row[invalid_x_row.argmax()]:

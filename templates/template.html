@@ -26,12 +26,42 @@
             display: flex !important;
             align-items: self-end !important;
         }
+
+         .bk-root .bk-layout-row {
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .bk-root .bk-layout-row > .bk-widget {
+            /* individual item styles */
+        }
+
+        .header{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap:5px;
+        }
+        .header a{
+            text-decoration: none;
+            background: #ffff66;
+            padding: 0.5rem;
+        }
+
+        .row {
+            
+        }
     </style>
 </head>
 <body>
-    <h1>
-        Rares
-    </h1>
+<div class="header">
+    <h1>Grafica pe calculator</h1>
+    <div class="row">
+        <a href="/">Bezier Curve</a>
+        <a href="/spline">B-Spline Curve</a>
+    </div>
+</div>
 <div style="height: 100vh; width: 100vw;display: flex;justify-content: center;align-items: center;">
     {{ script|safe }}
 </div>
