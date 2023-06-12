@@ -12,7 +12,7 @@ from bokeh.layouts import Column, Row
 from bokeh.models.widgets import DataTable
 import numpy as np
 from logic.b_spline import BSplineCurve
-from utils.tabledata import getCols
+from utils.tabledata import getcols
 from utils.error_dialog import DialogModal
 import io
 from pybase64 import b64decode
@@ -140,7 +140,7 @@ def modify_doc(doc):
     file_group.children[1].on_change("filename", handle_file_upload)
 
     data_table = DataTable(
-        source=control_source, columns=getCols(), height=300, editable=True
+        source=control_source, columns=getcols(), height=300, editable=True
     )
 
     input_group = InputPoints(addPoint)

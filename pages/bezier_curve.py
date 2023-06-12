@@ -14,7 +14,7 @@ from logic.bezier_curve import BezierCurve
 import pandas as pd
 from pybase64 import b64decode
 import io
-from utils.tabledata import getCols
+from utils.tabledata import getcols
 from utils.error_dialog import DialogModal
 from utils.input_points import InputPoints
 def modify_doc(doc):
@@ -65,7 +65,7 @@ def modify_doc(doc):
     bezier_curve = BezierCurve(control_points)
 
     data_table = DataTable(
-        source=control_source, columns=getCols(), height=300, editable=True
+        source=control_source, columns=getcols(), height=300, editable=True
     )
 
     # Python callback to update the data sources and redraw the curve

@@ -40,8 +40,8 @@ class BSplineCurve:
         """bspline basis function
 
         Args:
-            c (int): number of control points.
-            n (int): number of points on the curve.
+            control_point_count (int): number of control points.
+            curve_point_count (int): number of points on the curve.
             degree (int): curve degree
 
         Returns:
@@ -59,24 +59,23 @@ class BSplineCurve:
         samples = np.linspace(0, control_point_count - degree, curve_point_count)  # samples range
 
         # Cox - DeBoor recursive function to calculate basis
-        def coxDeBoor(knot_index, depth):
+        def coxdeboor(knot_index, depth):
             if depth == 0:
                 return ((samples - knot_vector[knot_index] >= 0) & (samples - knot_vector[knot_index + 1] < 0)).astype(int)
 
             denom1 = knot_vector[knot_index + depth] - knot_vector[knot_index]
             term1 = 0
             if denom1 > 0:
-                term1 = ((samples - knot_vector[knot_index]) / denom1) * coxDeBoor(knot_index, depth - 1)
+                term1 = ((samples - knot_vector[knot_index]) / denom1) * coxdeboor(knot_index, depth - 1)
 
             denom2 = knot_vector[knot_index + depth + 1] - knot_vector[knot_index + 1]
             term2 = 0
             if denom2 > 0:
-                term2 = (-(samples - knot_vector[knot_index + depth + 1]) / denom2) * coxDeBoor(knot_index + 1, depth - 1)
+                term2 = (-(samples - knot_vector[knot_index + depth + 1]) / denom2) * coxdeboor(knot_index + 1, depth - 1)
 
             return term1 + term2
 
         # Compute basis for each point
-        basis_functions = np.column_stack([coxDeBoor(k, degree) for k in range(control_point_count)])
+        basis_functions = np.column_stack([coxdeboor(k, degree) for k in range(control_point_count)])
         basis_functions[-1, -1] = 1
         return basis_functions
-

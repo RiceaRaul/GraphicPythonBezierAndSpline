@@ -1,6 +1,5 @@
 import numpy as np
 from scipy.special import comb
-import time
 
 class BezierCurve:
 
@@ -22,7 +21,6 @@ class BezierCurve:
             coefficients[i] = comb(n, ki, exact=True)
         return coefficients
 
-
     def calculate_curve_points(self, t: list) -> np.ndarray:
         """Calculate the points on the curve.
 
@@ -42,4 +40,3 @@ class BezierCurve:
             curve_points[i] = np.dot(binomial_coefficients, self.control_points * bernstein_polynomials.reshape(-1, 1))
 
         return curve_points
-

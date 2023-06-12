@@ -1,6 +1,7 @@
-from bokeh.models import (TableColumn, NumberFormatter,IntEditor)
+from bokeh.models import (TableColumn, NumberFormatter, IntEditor)
 
-def getCols() -> list:
+
+def getcols() -> list:
     columns = [
         TableColumn(
             field="x",
