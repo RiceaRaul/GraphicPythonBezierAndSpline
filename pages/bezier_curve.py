@@ -103,10 +103,8 @@ def modify_doc(doc):
 
     # Python callback to handle file selection
     def handle_file_upload(attr, old, new):
-        print(attr)
         if row_buttons.children[0].value:
             extension = row_buttons.children[0].filename.split(".")[-1]
-            print(extension)
             if extension.lower() != "csv":
                 dialog.openDialog("Trebuie urcat un fisier csv.")
             else:

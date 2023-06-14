@@ -1,4 +1,4 @@
-from bokeh.models import (TableColumn, NumberFormatter, IntEditor)
+from bokeh.models import (TableColumn, NumberFormatter, NumberEditor)
 
 
 def getcols() -> list:
@@ -6,13 +6,13 @@ def getcols() -> list:
         TableColumn(
             field="x",
             title="X",
-            editor=IntEditor(),
+            editor=NumberEditor(),
             formatter=NumberFormatter(format="0.000"),
         ),
         TableColumn(
             field="y",
             title="Y",
-            editor=IntEditor(),
+            editor=NumberEditor(),
             formatter=NumberFormatter(format="0.000"),
         ),
     ]

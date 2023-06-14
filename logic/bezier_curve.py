@@ -37,6 +37,6 @@ class BezierCurve:
         binomial_coefficients = self.binomial_coefficient(n, np.arange(n + 1))
         for i, parameter in enumerate(t):
             bernstein_polynomials = (1 - parameter) ** (n - np.arange(n + 1)) * parameter ** np.arange(n + 1)
-            curve_points[i] = np.dot(binomial_coefficients, self.control_points * bernstein_polynomials.reshape(-1, 1))
 
+            curve_points[i] = np.dot(binomial_coefficients, self.control_points * bernstein_polynomials.reshape(-1, 1))
         return curve_points

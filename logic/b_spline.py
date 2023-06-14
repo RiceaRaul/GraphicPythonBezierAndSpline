@@ -56,8 +56,11 @@ class BSplineCurve:
             [0] * degree + list(range(control_point_count - degree + 1)) + [control_point_count - degree] * degree,
             dtype="int",
         )  # knot vector
+        print(f"Degree:{degree}")
+        print(f"List:{list(range(control_point_count - degree + 1))}")
+        print(f"Vec 2 :{[control_point_count - degree]}")
+        print(f"Knok:{knot_vector}")
         samples = np.linspace(0, control_point_count - degree, curve_point_count)  # samples range
-
         # Cox - DeBoor recursive function to calculate basis
         def coxdeboor(knot_index, depth):
             if depth == 0:
@@ -77,5 +80,6 @@ class BSplineCurve:
 
         # Compute basis for each point
         basis_functions = np.column_stack([coxdeboor(k, degree) for k in range(control_point_count)])
+        print(basis_functions[-1,-1])
         basis_functions[-1, -1] = 1
         return basis_functions

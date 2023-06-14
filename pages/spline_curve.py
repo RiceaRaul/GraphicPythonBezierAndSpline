@@ -46,6 +46,9 @@ def modify_doc(doc):
     curve_source = ColumnDataSource(data=dict(x=[], y=[]))
     p.line("x", "y", source=curve_source, line_width=2, color="red")
 
+    #curve_source2 = ColumnDataSource(data=dict(x=[], y=[]))
+    #p.line("x", "y", source=curve_source2, line_width=2, color="blue")
+
     #callbacks
     def update_curve():
         currentDegree = degree.value
@@ -58,6 +61,9 @@ def modify_doc(doc):
             points_basis = np.dot(p, control_points)
             x, y = points_basis.T
             curve_source.data = {"x": x, "y": y}
+            #p2 = BSplineCurve.scipy_bspline(control_points, 100, currentDegree)
+            #x, y = p2.T
+            #curve_source2.data = {"x": x, "y": y}
 
 
     def addPoint():
